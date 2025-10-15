@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SNAP数据集数据可视化</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>SNAP数据集网络可视化</h1>
+            <p>基于D3.js的社交网络数据可视化展示</p>
+        </header>
+
+        <div class="controls">
+            <div class="stats-panel">
+                <h3>网络统计</h3>
+                <div id="stats-info">
+                    <div>总节点数: <span id="total-node-count">-</span></div>
+                    <div>总边数: <span id="total-edge-count">-</span></div>
+                    <div>显示节点: <span id="sampled-node-count">-</span></div>
+                    <div>网络密度: <span id="density">-</span></div>
+                    <div>平均度数: <span id="avg-degree">-</span></div>
+                </div>
+            </div>
+            
+            <div class="control-panel">
+                <div class="sampling-control">
+                    <label for="sample-size">采样大小:</label>
+                    <select id="sample-size">
+                        <option value="100">100节点</option>
+                        <option value="200" selected>200节点</option>
+                        <option value="500">500节点</option>
+                        <option value="1000">1000节点</option>
+                        <option value="0">全部节点</option>
+                    </select>
+                    <button id="apply-sample">应用采样</button>
+                </div>
+                    <button id="reset-view">重置布局</button>
+                    <button id="zoom-fit">适应视图</button>
+                    <button id="toggle-labels">切换标签</button>
+                    <button id="freeze-layout">冻结布局</button>
+                    <button id="download-svg">下载SVG</button>
+            </div>
+        </div>
+
+        <div class="visualization">
+            <div id="graph-container">
+                <svg id="network-graph"></svg>
+            </div>
+            <div id="node-info" class="info-panel">
+                <h3>节点信息</h3>
+                <div id="node-details">点击节点查看详情</div>
+            </div>
+        </div>
+
+        <footer>
+            <p>数据来源: SNAP数据集 | 可视化技术: D3.js</p>
+        </footer>
+    </div>
+
+    <!-- 加载D3.js库 -->
+    <script src="lib/d3.v7.min.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
