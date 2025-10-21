@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SNAP数据集网络可视化</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>SNAP数据集网络可视化</h1>
+            <p>SNAP数据集 - 网络结构</p>
+        </header>
+
+        <div class="dashboard">
+            <div class="dashboard-panel stats-panel">
+                <h3>网络统计</h3>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <span class="stat-label">总节点数</span>
+                        <span class="stat-value" id="total-node-count">-</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">总边数</span>
+                        <span class="stat-value" id="total-edge-count">-</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">显示节点</span>
+                        <span class="stat-value" id="sampled-node-count">-</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">网络密度</span>
+                        <span class="stat-value" id="density">-</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">平均度数</span>
+                        <span class="stat-value" id="avg-degree">-</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="dashboard-panel control-panel">
+                <div class="control-section">
+                    <div class="sampling-control">
+                        <label for="sample-size">数据采样</label>
+                        <select id="sample-size">
+                            <option value="100">100节点</option>
+                            <option value="200" selected>200节点</option>
+                            <option value="500">500节点</option>
+                            <option value="1000">1000节点</option>
+                            <option value="0">完整数据集</option>
+                        </select>
+                        <button id="apply-sample" class="primary">应用</button>
+                    </div>
+                </div>
+                
+                <div class="control-section">
+                    <div class="button-group">
+                        <button id="reset-view">
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+                            </svg>
+                            重置
+                        </button>
+                        <button id="zoom-fit">
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
+                            </svg>
+                            适应视图
+                        </button>
+                        <button id="toggle-labels">
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 0 1 0 2.828l-7 7a2 2 0 0 1-2.828 0l-7-7A1.994 1.994 0 0 1 3 12V7a4 4 0 0 1 4-4z"/>
+                            </svg>
+                            <span class="label">标签</span>
+                        </button>
+                        <button id="freeze-layout">
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 15v2m-6 4h12a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2zm10-10V7a4 4 0 0 0-8 0v4h8z"/>
+                            </svg>
+                            <span class="freeze">冻结</span>
+                        </button>
+                        <button id="download-svg">
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+                            </svg>
+                            导出
+                        </button>
+                    </div>
+                </div>
+
+                <div class="control-section">
+                    <div class="dataset-info">
+                        <p>没有SNAP数据集？<a href="https://snap.stanford.edu/data/#socnets" target="_blank" class="dataset-link">点击这里获取</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 新增的数据源面板 -->
+        <div class="dashboard-panel data-source-panel">
+            <h3>数据源</h3>
+            <div class="data-source-content">
+                <div class="current-data-info">
+                    <div class="data-status">
+                        <span class="status-indicator active"></span>
+                        <span class="status-text">当前使用: <span id="current-data-source">默认数据集</span></span>
+                    </div>
+                </div>
+                <div class="upload-section">
+                    <button id="upload-trigger" class="secondary">
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/>
+                        </svg>
+                        上传自定义数据
+                    </button>
+                    <div class="file-info">支持 .txt, .csv, .json 格式</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="visualization">
+            <div id="graph-container">
+                <svg id="network-graph"></svg>
+            </div>
+            <div id="node-info" class="info-panel">
+                <h3>节点信息</h3>
+                <div id="node-details">
+                    <p>点击网络图中的节点查看详细信息</p>
+                    <p style="margin-top: 10px; font-size: 0.8rem; color: #95a5a6;">
+                        节点信息将显示在这里，包括度数、连接和社区信息
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>数据来源: Stanford SNAP 数据集 | 可视化技术: D3.js | 网络分析工具</p>
+        </footer>
+    </div>
+
+    <!-- 模态框 -->
+    <div id="upload-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>上传数据集</h3>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="format-info">
+                    <h4>支持的数据格式</h4>
+                    <ul>
+                        <li><strong>SNAP格式 (.txt)</strong>：每行两个节点ID，用空格分隔</li>
+                        <li><strong>CSV格式 (.csv)</strong>：包含source和target列</li>
+                        <li><strong>JSON格式 (.json)</strong>：包含nodes和links数组</li>
+                    </ul>
+                    <div class="example">
+                        <h5>SNAP格式示例</h5>
+                        <pre>0 1
+0 2
+1 2
+1 3</pre>
+                    </div>
+                </div>
+                <div class="upload-area" id="upload-area">
+                    <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/>
+                    </svg>
+                    <p>拖放文件到这里，或<button id="browse-files" class="text-button">点击浏览</button></p>
+                    <input type="file" id="modal-file-upload" accept=".txt,.csv,.json" style="display: none;">
+                </div>
+
+                <div id="file-info" class="file-info">未选择文件</div>
+
+
+                <div id="upload-progress" class="upload-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill"></div>
+                    </div>
+                    <span class="progress-text">处理中...</span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="cancel-upload" class="secondary">取消</button>
+                <button id="confirm-upload" class="primary" disabled>开始处理</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="lib/d3.v7.min.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
